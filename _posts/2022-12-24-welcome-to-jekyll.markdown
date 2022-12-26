@@ -146,6 +146,16 @@ Each 3 elements when traversed are the rows of the matrix
 [6][7][8]
 ```
 
+```c++
+               [ row 0 ] [ row 1 ] [ row 2 ]
+mat3_t mat3 = { 0, 1, 2,  3, 4, 5,  6, 7, 8 };
+
+// reformatted
+mat3_t mat3 = { 0, 1, 2,   // [ row 0 ]
+                3, 4, 5,   // [ row 1 ]
+                6, 7, 8 }; // [ row 2 ]
+```
+
 ##### Array Option #2
 
 Each 3 elements when traversed are the columns of the matrix
@@ -350,11 +360,110 @@ mat3_t transposed = transpose(result);
 
 ```c++
 struct mat3_t {
-  float data[3][3];
+  float rows[3][3]; // name helps identify main array
 };
 ```
 
+Use a main array to traverse rows and a sub array to access column elements.
 
+This approach might feel more intuitive than the single array method we touched on before. It does have some advantages but one thing to remember again is the main array usually represents the rows and the sub array represents the column elements. Of course it is possible to just interpret the main array as columns and the sub arrays as rows, but this is less common.
+
+The memory layout will be identical to the single array approach, we just us the individual arrays to do lookups instead of using a `row_col` function.
+
+```c++
+mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
+    mat3_t m;
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            float elem = 0.0f;
+            for (int s = 0; s < 3; ++s) {
+                elem += lhs.rows[r][s] * rhs.rows[s][c];
+            }
+            m.rows[r][c] = elem;
+        }
+    }
+    return m;
+}
+
+              [row 0]    [row 1]    [row 2]
+mat3_t a = {{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}};
+mat3_t b = {{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}}};
+mat3_t result = a * b; // pre-multiply (row major)
+
+// display storage order
+for (int r = 0; r < 3; ++r) {
+    for (int c = 0; c < 3; ++c) { // inner loop walks sub array
+        std::cout << result.rows[r][c] << ' ';
+    }
+}
+
+// display convention order
+for (int r = 0; r < 3; ++r) {
+    for (int c = 0; c < 3; ++c) {
+        std::cout << result.rows[r][c] << " ";
+    }
+    std::cout << '\n';
+}
+
+// prints
+// 30 24 18 84 69 54 138 114 90
+//
+// 30 24 18
+// 84 69 54
+// 138 114 90
+//
+// display order in rows
+```
+
+```c++
+struct mat3_t {
+  float cols[3][3]; // name helps identify main array
+};
+
+// notice column (c) and row (r) indices are swapped
+mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
+    mat3_t m;
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            float elem = 0.0f;
+            for (int s = 0; s < 3; ++s) {
+                elem += lhs.cols[s][r] * rhs.cols[c][s];
+            }
+            m.cols[c][r] = elem;
+        }
+    }
+    return m;
+}
+
+              [col 0]    [col 1]    [col 2]
+mat3_t a = {{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}};
+mat3_t b = {{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}}};
+mat3_t result = b * a; // post-multiply (column major)
+
+// display storage order
+for (int c = 0; c < 3; ++c) {
+    for (int r = 0; r < 3; ++r) {  // inner loop walks sub array
+        std::cout << result.cols[c][r] << ' ';
+    }
+}
+
+// display convention order
+for (int r = 0; r < 3; ++r) {
+    for (int c = 0; c < 3; ++c) {
+        std::cout << result.cols[c][r] << ' ';
+    }
+    std::cout << '\n';
+}
+
+// prints
+// 30 24 18 84 69 54 138 114 90
+//
+// 30 84 138
+// 24 69 114
+// 18 54 90
+//
+// display order in columns
+```
 
 {% highlight cpp %}
 void doSomething()
