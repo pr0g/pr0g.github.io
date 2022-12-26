@@ -465,9 +465,135 @@ for (int r = 0; r < 3; ++r) {
 // display order in columns
 ```
 
-{% highlight cpp %}
-void doSomething()
-{
+#### Composition of vector subtypes
 
+The last approach to cover is one where we build a matrix out of vectors in our library. When we create these vectors we need to decide at the outset if they correspond to rows or columns (similar to the multidimensional array technique from earlier).
+
+Below is a brief example of what this might look like.
+
+```c++
+struct vec3_t {
+    float elems[3]; // using an array for ease of traversal
+};
+
+struct mat3_t {
+    vec3_t rows[3];
+};
+
+// vector dot product, equivalent to matrix multiply innermost loop
+float dot(const vec3_t& lhs, const vec3_t& rhs) {
+    return lhs.elems[0] * rhs.elems[0] + lhs.elems[1] * rhs.elems[1] +
+           lhs.elems[2] * rhs.elems[2];
 }
-{% endhighlight %}
+
+mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
+    mat3_t m;
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            m.rows[r].elems[c] = dot( // build temporary column vector on rhs
+                lhs.rows[r], vec3_t{rhs.rows[0].elems[c],
+                                    rhs.rows[1].elems[c],
+                                    rhs.rows[2].elems[c]});
+        }
+    }
+    return m;
+}
+
+mat3_t a = {{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}};
+mat3_t b = {{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}}};
+mat3_t result = a * b; // pre-multiply
+
+for (int r = 0; r < 3; ++r) {
+    for (int c = 0; c < 3; ++c) { // inner loop walks vector (columns)
+        std::cout << result.rows[r].elems[c] << ' ';
+    }
+}
+
+for (int r = 0; r < 3; ++r) {
+    for (int c = 0; c < 3; ++c) {
+        std::cout << result.rows[r].elems[c] << " ";
+    }
+    std::cout << '\n';
+}
+
+// prints
+// 30 24 18 84 69 54 138 114 90
+//
+// 30 24 18
+// 84 69 54
+// 138 114 90
+//
+// display order in rows
+```
+
+If we'd prefer to use columns instead we can make a pretty small change to have this work.
+
+```c++
+struct mat3_t {
+    vec3_t cols[3];
+};
+
+mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
+    mat3_t m;
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            m.cols[c].elems[r] = dot( // build temporary row vector on lhs
+                vec3_t{lhs.cols[0].elems[r],
+                       lhs.cols[1].elems[r],
+                       lhs.cols[2].elems[r]}, rhs.cols[c]);
+        }
+    }
+    return m;
+}
+
+mat3_t a = {{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}};
+mat3_t b = {{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}}};
+mat3_t result = b * a; // post-multiply
+
+
+for (int c = 0; c < 3; ++c) {
+    for (int r = 0; r < 3; ++r) { // inner loop walks vector (rows)
+        std::cout << result.cols[c].elems[r] << ' ';
+    }
+}
+
+for (int r = 0; r < 3; ++r) {
+    for (int c = 0; c < 3; ++c) {
+        std::cout << result.cols[c].elems[r] << " ";
+    }
+    std::cout << '\n';
+}
+
+// prints
+// 30 24 18 84 69 54 138 114 90
+//
+// 30 84 138
+// 24 69 114
+// 18 54 90
+//
+// display order in columns
+```
+
+Depending on which convention you pick (column major and post-multiply or row major and pre-multiply), remember it'll be faster to return a matrix column if you're using column major as we don't have to construct a new instance (we could if we wanted return a const reference to it). This means rows will be slightly more expensive to return (as there's a small amount of work to build one) and we can't return a reference to this type as it is constructed on the fly and returned by value (and vice versa when dealing with row major).
+
+```c++
+// possible API
+struct mat3_t {
+    vec3_t col(int i) const { return cols[i]; } // trivial
+    vec3_t row(int i) const { return vec3_t{cols[0].elems[i], // non-trivial
+                                            cols[1].elems[i],
+                                            cols[2].elems[i]}; }
+private:
+    vec3_t cols[3]; // actual implementation hidden
+};
+```
+
+In this example we used an array in the vector type to make traversal simpler. Most libraries use a `union` to allow access through `float x, y, z;` as well as via an array. This is possible in C however it's not _technially_ allowed in C++ (see [this Stack Overflow post](https://stackoverflow.com/a/11996970/1947066) for more details). A different solution is to simply write accessor member functions (something like `get_x(), set_x(...)` etc...) or provide operator overloads for the `[]` operator on your type. A safe technique to provide array access to data members does exist (I first learned about this technique [here](https://www.gamedev.net/forums/topic/328530-c-union-question/3126294/?page=1) on GameDev.net and wrote a little more about it [here](https://github.com/pr0g/as#specializations) in a math library I implemented) but it is a bit complicated.
+
+This approach of using a subtype can also be very helpful if creating a SIMD implementation (that way operations can be composed) but the specifics of implementation details of SIMD are outside the scope of this post.
+
+### Conclusion
+
+I hope that just about covers the main approaches you might want to consider when implementing a math library for games. There's no 100% right answer and each approach comes with pros and cons (e.g. flexibility vs simplicity).
+
+If you'd like to explore more you can checkout this math library I created written in C++ - [as](https://github.com/pr0g/as). This uses library uses row major storage/layout but allows either row or column major convention to be used. It is selected by defining either `AS_COL_MAJOR` or `AS_ROW_MAJOR`. I have another math library witten purely in C (no templates or operator overloading) - [as-c-math](https://github.com/pr0g/as-c-math). It uses column major storage and convention. It isn't as mature or fully featured as [as](https://github.com/pr0g/as) but it's slowly growing and improving. I hope they might prove useful to review to learn more about what's discussed above.
