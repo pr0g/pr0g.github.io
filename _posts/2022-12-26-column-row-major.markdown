@@ -202,6 +202,8 @@ mat3_t mat3 = { 0, 1, 2,   // [ row 0 ]
 
 {% endraw %}
 
+__[Godbolt Link](https://gcc.godbolt.org/z/sKanW5nfd)__
+
 #### Array Option #2
 
 Each 3 elements when traversed are the columns of the matrix.
@@ -234,6 +236,8 @@ mat3_t mat3 = { 0, 1, 2,   // [ col 0 ]
 ```
 
 {% endraw %}
+
+__[Godbolt Link](https://gcc.godbolt.org/z/EbYanPxq7)__
 
 The key thing with the two approaches above is that the storage is identical. The part that's different is access/traversal.
 
@@ -421,6 +425,8 @@ mat3_t result = b * a; // post-multiply
 
 {% endraw %}
 
+__[Godbolt Link](https://gcc.godbolt.org/z/o3MGqjd9d)__
+
 If we transpose `result` we get back the matrix in row major format
 
 {% raw %}
@@ -445,6 +451,8 @@ mat3_t transposed = transpose(result);
 ```
 
 {% endraw %}
+
+__[Godbolt Link](https://gcc.godbolt.org/z/xWGPWPanT)__
 
 #### Multi-dimensional array
 
@@ -514,6 +522,8 @@ for (int r = 0; r < 3; ++r) {
 
 {% endraw %}
 
+__[Godbolt Link](https://gcc.godbolt.org/z/bnr7Th1rr)__
+
 To use column major order we can decide to make the main array columns instead of rows and update the traversal order slightly.
 
 {% raw %}
@@ -571,6 +581,8 @@ for (int r = 0; r < 3; ++r) {
 
 {% endraw %}
 
+__[Godbolt Link](https://gcc.godbolt.org/z/8Mevd36xf)__
+
 This will work but remember using columns as the first parameter when doing a lookup (`[col, row]` instead of `[row][col]`) is less common and may be confusing to users. Ensure to document this clearly in the API if this is something you decide to do.
 
 For completeness you could also do the same as _Array Option 3_ and use rows as the main array and layout the data in column major format, using the same multiply implementation as for rows.
@@ -602,6 +614,8 @@ mat3_t result = b * a; // post-multiply
 ```
 
 {% endraw %}
+
+__[Godbolt Link](https://gcc.godbolt.org/z/odvT93EcW)__
 
 #### Composition of vector subtypes
 
@@ -669,6 +683,8 @@ for (int r = 0; r < 3; ++r) {
 
 {% endraw %}
 
+__[Godbolt Link](https://gcc.godbolt.org/z/Kc8Yd46M7)__
+
 If we'd prefer to use columns instead we can make a pretty small change to have this work.
 
 {% raw %}
@@ -721,7 +737,9 @@ for (int r = 0; r < 3; ++r) {
 
 {% endraw %}
 
-Depending on which convention you pick (column major and post-multiply or row major and pre-multiply) remember it'll be faster to return a matrix column if you're using column major as we don't have to construct a new object (we could if we wanted return a const reference to it). This means rows will be slightly more expensive to return (as there's a small amount of work to build one) and we can't return a reference to this type as it is constructed on the fly and returned by value (and vice versa when dealing with row major).
+__[Godbolt Link](https://gcc.godbolt.org/z/vjzE8GoqP)__
+
+Depending on which convention you pick (column major and post-multiply or row major and pre-multiply) keep in mind it'll be faster to return a matrix column if you're using column major as we don't have to construct a new object (we could if we wanted return a const reference to it). This means rows will be slightly more expensive to return (as there's a small amount of work to build one) and we can't return a reference to this type as it is constructed on the fly and returned by value (and vice versa when dealing with row major).
 
 {% raw %}
 
@@ -738,6 +756,8 @@ private:
 ```
 
 {% endraw %}
+
+If we're returning a vector (column or row) by value we also need to make it obvious to the caller that modifying this type will not change the underlying matrix (this can be a gotcha and is one reason to prefer the array based approach).
 
 In the example above we used an array in the vector type to make traversal simpler. Most libraries use a `union` to allow access through `float x, y, z;` as well as via an array. This is possible in C however it's not _technially_ allowed in C++ (see [this Stack Overflow post](https://stackoverflow.com/a/11996970/1947066) for more details). A different solution is to simply write accessor member functions (something like `get_x(), set_x(...)` etc...) or provide operator overloads for the `[]` operator on your type. A safe technique to provide array access to data members does exist (I first learned about this technique [here](https://www.gamedev.net/forums/topic/328530-c-union-question/3126294/?page=1) on GameDev.net and wrote a little more about it [here](https://github.com/pr0g/as#specializations) in a math library I implemented) but it is a little complicated to get your head around initially.
 
