@@ -45,11 +45,11 @@ When we write a vector we can either stand it upright (column vector) or lie it 
 
 {% endraw %}
 
-For purposes of the convention part, when we talk generally about multiplying matrices together, we can think of the above as either a `4x1` matrix (4 rows and 1 column - column major) or a `1x4` matrix (1 row and 4 columns - row major). This fits with the bigger picture of multiplying matrices of different sizes together (this is useful to know about but rarely something that comes up outside of multiplying vectors and matrices together, at least in a game development setting).
+For purposes of the convention part, when we talk generally about multiplying matrices together, we can think of the above as either a `4x1` matrix (4 rows and 1 column - column major) or a `1x4` matrix (1 row and 4 columns - row major). This fits with the bigger picture of multiplying matrices of different sizes together (this is useful to know about but it's rarely something that comes up outside of multiplying vectors and matrices together, at least in a game development setting).
 
 To multiply two matrices together we multiply the row(s) on the left hand side with the column(s) on the right hand side.
 
-For a matrix multiplication to be valid, the number of columns of the matrix on the left has to equal the number of rows in the matrix on the right. Most of the time in game engines we're just multiplying square matrices (`3x3` or `4x4`) so we don't think about it, but if we remember to sometimes think of vectors as their `1xN` or `Mx1` matrix counterparts, this explains why when multiplying by a column vector it goes on the right and when multiplying by a row vector it goes on the left.
+For a matrix multiplication to be valid, the number of columns the matrix has on the left has to equal the number of rows the matrix has on the right. Most of the time in game engines we're just multiplying square matrices (`3x3` or `4x4`) so we don't think about it, but if we remember to sometimes think of vectors as their `1xN` or `Mx1` matrix counterparts, this explains why when multiplying by a column vector it goes on the right and when multiplying by a row vector it goes on the left.
 
 {% raw %}
 
@@ -116,7 +116,7 @@ This rule satisfies the requirement that we always multiply the row on the left 
 // result (row vector)
 [1a + 2e + 3i + 4m][1b + 2f + 3j + 4n][1c + 2g + 3k + 4p][1d + 2h + 3l + 4p]
 
-// note: the value of each corresponding element in the resulting vectors are the same
+// note: the value of each corresponding element in the resulting vectors is the same
 ```
 
 {% endraw %}
@@ -195,9 +195,9 @@ Each 3 elements when traversed are the rows of the matrix.
 mat3_t mat3 = { 0, 1, 2,  3, 4, 5,  6, 7, 8 };
 
 // reformatted
-mat3_t mat3 = { 0, 1, 2,   // [ row 0 ]
-                3, 4, 5,   // [ row 1 ]
-                6, 7, 8 }; // [ row 2 ]
+mat3_t mat3 = { 0, 1, 2,   // row 0
+                3, 4, 5,   // row 1
+                6, 7, 8 }; // row 2
 ```
 
 {% endraw %}
@@ -214,9 +214,13 @@ Each 3 elements when traversed are the columns of the matrix.
 [0][1][2][3][4][5][6][7][8] // data
 
 // conceptually becomes
-[0][3][6]
-[1][4][7]
-[2][5][8]
+//  c  c  c
+//  o  o  o
+//  l  l  l
+//  0  1  2
+   [0][3][6]
+   [1][4][7]
+   [2][5][8]
 ```
 
 {% endraw %}
@@ -228,9 +232,9 @@ Each 3 elements when traversed are the columns of the matrix.
 mat3_t mat3 = { 0, 1, 2,  3, 4, 5,  6, 7, 8 };
 
 // reformatted
-mat3_t mat3 = { 0, 1, 2,   // [ col 0 ]
-                3, 4, 5,   // [ col 1 ]
-                6, 7, 8 }; // [ col 2 ]
+mat3_t mat3 = { 0, 1, 2,   // col 0
+                3, 4, 5,   // col 1
+                6, 7, 8 }; // col 2
 
 // the above can be confusing...
 ```
@@ -251,16 +255,18 @@ int row_col_rm(int row, int col) {
   return row * 3 + col;
 }
 
-mat3_t mat3 = { ... };
-int offset = row_col_rm(1, 2); // offset 5
-int value = mat[offset];       // value 6
-
 // col major (3x3 matrix)
 int row_col_cm(int row, int col) {
   return col * 3 + row;
 }
 
-mat3_t mat3 = { ... };
+mat3_t mat3 = { 0, 1, 2,
+                3, 4, 5,
+                6, 7, 8 };
+
+int offset = row_col_rm(1, 2); // offset 5
+int value = mat[offset];       // value 6
+
 int offset = row_col_cm(1, 2); // offset 7
 int value = mat[offset];       // value 8
 ```
@@ -400,7 +406,7 @@ mat4_t transform = { 1, 0, 0, tx,
 
 {% endraw %}
 
-We also continue to use `row_col_rm` (or simply just `row_col`) as we're explicitly using the column storage order in how we layout the data. One downside to be aware of with this approach is the basis vectors are no longer contiguous in memory which might make certain access patterns slower (though this likely negligible in practice) and you'll need to transpose the matrix before sending it to a graphics api (e.g. as a uniform) to ensure the data is contiguous and no longer interleaved.
+We also continue to use `row_col_rm` (or simply just `row_col`) as we're explicitly using the column storage order in how we layout the data. One downside to be aware of with this approach is the basis vectors are no longer contiguous in memory which might make certain access patterns slower (though this is likely negligible in practice) and you'll need to transpose the matrix before sending it to a graphics API (e.g. as a uniform) to ensure the data is contiguous and no longer interleaved.
 
 {% raw %}
 
@@ -420,7 +426,7 @@ mat3_t result = b * a; // post-multiply
 // 24 69 114
 // 18 54 90
 //
-// display order columns
+// display order in columns
 ```
 
 {% endraw %}
@@ -585,7 +591,7 @@ __[Godbolt Link](https://gcc.godbolt.org/z/8Mevd36xf)__
 
 This will work but remember using columns as the first parameter when doing a lookup (`[col, row]` instead of `[row][col]`) is less common and may be confusing to users. Ensure to document this clearly in the API if this is something you decide to do.
 
-For completeness you could also do the same as _Array Option 3_ and use rows as the main array and layout the data in column major format, using the same multiply implementation as for rows.
+For completeness you could also do the same as _Array Option 3_ and use rows as the main array and layout the data in column major format, using the same multiply implementation as for row major.
 
 {% raw %}
 
