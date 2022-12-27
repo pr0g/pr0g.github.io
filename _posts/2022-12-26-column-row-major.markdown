@@ -6,7 +6,7 @@ categories: mathematics matrix
 ---
 This is yet another post about understanding the difference between column major and row major vectors and matrices (in a game development setting). If you're attempting to learn or remember the difference between them then hopefully this will be a useful resource and can supplement other reading.
 
-This article will touch on some of the theory but the main focus of what is to follow will be on what crops up when implementing a maths library for games. For a really fantastic in-depth treatment on the subject of matrices check out these chapters from [Game Math](https://gamemath.com/).
+This article will touch on some of the theory but the main focus of what is to follow will be on what crops up when implementing a math library for games. For a really fantastic in-depth treatment on the subject of matrices check out these chapters from [Game Math](https://gamemath.com/).
 
 - [Chapter 4: Introduction to Matrices](https://gamemath.com/book/matrixintro.html)
 - [Chapter 6: More on Matrices](https://gamemath.com/book/matrixmore.html)
