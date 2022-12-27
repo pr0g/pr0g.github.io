@@ -151,7 +151,7 @@ transformed_point = point * transform;
 
 {% endraw %}
 
-When it comes to matrices that's (in my mind at least) the stuff that comes up most often. If you want to learn more please checkout the links mentioned at the top of the article. This is all just theory though, let's review what actually happens when you want to implement these concepts in your very own math library.
+When it comes to matrices that's (in my mind at least) the stuff that comes up most often. If you want to learn more please check out the links mentioned at the top of the article. This is all just theory though, let's review what actually happens when you want to implement these concepts in your very own math library.
 
 ### Storage/Access
 
@@ -773,7 +773,7 @@ This approach of using a subtype can also be very helpful if using a SIMD implem
 
 I hope that just about covers the main approaches you might want to consider when implementing a math library for games. There's no 100% right answer and each approach comes with pros and cons (e.g. flexibility vs simplicity).
 
-If you'd like to explore more you can checkout this math library I created written in C++.
+If you'd like to explore more you can check out this math library I created written in C++.
 
 - [as - almost something](https://github.com/pr0g/as).
 
