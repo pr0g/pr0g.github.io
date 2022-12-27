@@ -19,7 +19,7 @@ When we talk about an `MxN` matrix, in the vast majority of cases (throughout te
 
 There are two pieces to this puzzle, convention (the maths part (_theory_)) and storage/access (the computer science part (_practice_)). They are both intertwined but it's possible to deal with them individually. Let's start with convention.
 
-> If you're already comfortable with the convention part then feel free to skip it and go straght to [storage](#storageaccess).
+> If you're already comfortable with the convention part then feel free to skip it and go straight to [storage](#storageaccess).
 
 ### Convention
 
@@ -765,7 +765,7 @@ private:
 
 If we're returning a vector (column or row) by value we also need to make it obvious to the caller that modifying this type will not change the underlying matrix (this can be a gotcha and is one reason to prefer the array based approach).
 
-In the example above we used an array in the vector type to make traversal simpler. Most libraries use a `union` to allow access through `float x, y, z;` as well as via an array. This is possible in C however it's not _technially_ allowed in C++ (see [this Stack Overflow post](https://stackoverflow.com/a/11996970/1947066) for more details). A different solution is to simply write accessor member functions (something like `get_x(), set_x(...)` etc...) or provide operator overloads for the `[]` operator on your type. A safe technique to provide array access to data members does exist (I first learned about this technique [here](https://www.gamedev.net/forums/topic/328530-c-union-question/3126294/?page=1) on GameDev.net and wrote a little more about it [here](https://github.com/pr0g/as#specializations) in a math library I implemented) but it is a little complicated to get your head around initially.
+In the example above we used an array in the vector type to make traversal simpler. Most libraries use a `union` to allow access through `float x, y, z;` as well as via an array. This is possible in C however it's not _technically_ allowed in C++ (see [this Stack Overflow post](https://stackoverflow.com/a/11996970/1947066) for more details). A different solution is to simply write accessor member functions (something like `get_x(), set_x(...)` etc...) or provide operator overloads for the `[]` operator on your type. A safe technique to provide array access to data members does exist (I first learned about this technique [here](https://www.gamedev.net/forums/topic/328530-c-union-question/3126294/?page=1) on GameDev.net and wrote a little more about it [here](https://github.com/pr0g/as#specializations) in a math library I implemented) but it is a little complicated to get your head around initially.
 
 This approach of using a subtype can also be very helpful if using a SIMD implementation (that way operations can be composed) but the specifics and implementation details of SIMD are outside the scope of this post.
 
