@@ -245,7 +245,7 @@ __[Godbolt Link](https://gcc.godbolt.org/z/EbYanPxq7)__
 
 The key thing with the two approaches above is that the storage is identical. The part that's different is access/traversal.
 
-To make accessing elements by their row/column we can write an accessor for either the column major case or row major case.
+To access elements by their row/column we can write a function for either the column major case or row major case.
 
 {% raw %}
 
