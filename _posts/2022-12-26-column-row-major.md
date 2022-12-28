@@ -116,7 +116,9 @@ This rule satisfies the requirement that we always multiply the row on the left 
 // result (row vector)
 [1a + 2e + 3i + 4m][1b + 2f + 3j + 4n][1c + 2g + 3k + 4p][1d + 2h + 3l + 4p]
 
-// note: the value of each corresponding element in the resulting vectors is the same
+// note: the value of each corresponding element in the resulting
+// vectors is the same (the row vector x component is rhe same as
+// the column vector x component etc...)
 ```
 
 {% endraw %}
@@ -128,11 +130,14 @@ For a concrete example let's take transformations. We usually want to scale firs
 {% raw %}
 
 ```c++
+vec4_t point;
+mat4_t translate, rotate, scale;
+// ...
 // concatenating transforms (column major matrices)
 // order: scale, rotate, translate (happening right to left)
-transform = translate * rotate * scale;
+mat4_t transform = translate * rotate * scale;
 // transforming a column vector
-transformed_point = transform * point;
+vec4_t transformed_point = transform * point;
 ```
 
 {% endraw %}
@@ -142,11 +147,14 @@ When dealing with row major matrices we pre-multiply them which means we start o
 {% raw %}
 
 ```c++
+vec4_t point;
+mat4_t translate, rotate, scale;
+// ...
 // concatenating transforms (row major matrices)
 // order: scale, rotate, translate (happening left to right)
-transform = scale * rotate * translate;
+mat4_t transform = scale * rotate * translate;
 // transforming a row vector
-transformed_point = point * transform;
+vec4_t transformed_point = point * transform;
 ```
 
 {% endraw %}
