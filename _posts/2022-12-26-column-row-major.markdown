@@ -589,7 +589,7 @@ for (int r = 0; r < 3; ++r) {
 
 __[Godbolt Link](https://gcc.godbolt.org/z/8Mevd36xf)__
 
-This will work but remember using columns as the first parameter when doing a lookup (`[col, row]` instead of `[row][col]`) is less common and may be confusing to users. Ensure to document this clearly in the API if this is something you decide to do.
+This will work but remember using columns as the first parameter when doing a lookup (`[col][row]` instead of `[row][col]`) is less common and may be confusing for users. Ensure to document this clearly in the API if this is something you decide to do.
 
 For completeness you could also do the same as _Array Option 3_ and use rows as the main array and layout the data in column major format, using the same multiply implementation as for row major.
 
