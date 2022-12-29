@@ -325,7 +325,7 @@ mat33 operator*(const mat33& lhs, const mat33& rhs) {
 
 {% endraw %}
 
-The only difference is swapping out `row_col_rm` with `row_col_cm` and making sure we swap the order of the two matrices when we multiply them together. If we print the results of the `data` member we'll see we get the exact same result.
+The only difference is swapping out `row_col_rm` with `row_col_cm` and making sure we swap the order of the two matrices when we multiply them together. If we print the results of the `data` member we'll see we get the exact same result ([Diffchecker link](https://www.diffchecker.com/OosVAJmW/)).
 
 {% raw %}
 
@@ -538,7 +538,7 @@ for (int r = 0; r < 3; ++r) {
 
 __[Godbolt Link](https://gcc.godbolt.org/z/bnr7Th1rr)__
 
-To use column major order we can decide to make the main array columns instead of rows and update the traversal order slightly.
+To use column major order we can decide to make the main array columns instead of rows and update the traversal order slightly ([Diffchecker link](https://www.diffchecker.com/h0Ewqcwj/)).
 
 {% raw %}
 
@@ -792,3 +792,14 @@ I have another math library witten purely in C (no templates or operator overloa
 - [as-c-math](https://github.com/pr0g/as-c-math).
 
 It uses column major storage/layout and convention. It isn't as mature or fully featured as [as](https://github.com/pr0g/as) but it's slowly growing and improving. I hope they might prove useful to review to learn more about what was covered.
+
+#### Existing math libraries
+
+If this all sounds like too much trouble, there's a ton of excellent math libraries out there to use. It's very useful to study different libraries to see the various design choices that were made too.
+
+- [glm](https://github.com/g-truc/glm) - C++
+- [cglm](https://github.com/recp/cglm) - C
+- [mathfu](https://github.com/google/mathfu) - C++
+- [HandmadeMath](https://github.com/HandmadeMath/HandmadeMath) - C
+- [linmath.h](https://github.com/datenwolf/linmath.h) - C
+- [kazmath](https://github.com/Kazade/kazmath) - C
