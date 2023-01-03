@@ -297,7 +297,7 @@ mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
         for (int c = 0; c < 3; ++c) {
             float elem = 0.0f;
             for (int s = 0; s < 3; ++s) {
-                elem += lhs.data[row_col_rm(r, s)]
+                elem += lhs.data[row_col_rm(r, s)] *
                         rhs.data[row_col_rm(s, c)];
             }
             m.data[row_col_rm(r, c)] = elem;
