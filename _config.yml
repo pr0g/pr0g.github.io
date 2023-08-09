@@ -24,8 +24,14 @@ description: >- # this means to ignore newlines until "baseurl:"
   A programming blog
 domain: pr0g.github.io
 url: https://pr0g.github.io
+github_username: pr0g
 twitter_username: tom_h_h
-github_username:  pr0g
+linkedin:
+  - username: 💻-tom-hulton-harrop-864b7922
+    name: tom
+mastodon:
+  - username: tom_h_h
+    instance: mastodon.gamedev.place
 
 # Build settings
 theme: minima
