@@ -28,7 +28,7 @@ The portal is this intangible outline that you can't really touch, or do anythin
 
 On the other hand, you could use a teleporter. The teleporter is a small box you can type some coordinates into, and when you press the big red button in the center of the device, you jump to the bakery and can access your delicious cake.
 
-<img src="/assets/images/teleporter-cake.png" alt="teleporter cake" width="50%"/>
+<img src="/assets/images/teleporter-cake.png" alt="teleporter cake" width="40%"/>
 
 It's pretty easy to have more than one teleporter, you just type the same coordinates in and it'll take you there. In fact you can make as many as you'd like by 3d printing (replicating) teleporters, and so long as the coordinates entered are the same, you'll end-up at the bakery.
 
