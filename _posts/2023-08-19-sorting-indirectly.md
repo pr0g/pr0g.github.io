@@ -183,5 +183,3 @@ Please go read the awesome series by Raymond Chen on the Old New Thing blog abou
 * [Sorting by indices, part 2: The Schwartzian transform](https://devblogs.microsoft.com/oldnewthing/20170106-00/?p=95135)
 * [Applying a permutation to a vector, part 4: What is the computational complexity of the apply\_permutation function?](https://de.microsoft.com/oldnewthing/20170109-00/?p=95145)
 * [Applying a permutation to a vector, part 5](https://devblogs.microsoft.com/oldnewthing/20170110-00/?p=95155)
-
-Thanks for reading!
