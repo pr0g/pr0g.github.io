@@ -118,7 +118,7 @@ This rule satisfies the requirement that we always multiply the row on the left 
 [1a + 2e + 3i + 4m][1b + 2f + 3j + 4n][1c + 2g + 3k + 4p][1d + 2h + 3l + 4p]
 
 // note: the value of each corresponding element in the resulting
-// vectors is the same (the row vector x component is rhe same as
+// vectors is the same (the row vector x component is the same as
 // the column vector x component etc...)
 ```
 
