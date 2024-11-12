@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "Column Major and Row Major Vectors and Matrices (for games)"
+title: "Column Vectors, Row Vectors, and Matrices (for games)"
 date:  2022-12-26 14:52:13 +0000
 categories: mathematics matrix
 ---
 
-This is yet another post about understanding the difference between column major and row major vectors and matrices (in a game development setting). If you're attempting to learn or remember the difference between them then hopefully this will be a useful resource and can supplement other reading.
+This is yet another post about understanding the difference between column vectors, row vectors, and matrices (in a game development setting). If you're attempting to learn or remember the difference between them then hopefully this will be a useful resource and can supplement other reading.
 
-This article will touch on some of the theory but the main focus of what is to follow will be on what crops up when implementing a math library for games. For a really fantastic in-depth treatment on the subject of matrices check out these chapters from [Game Math](https://gamemath.com/).
+This article will touch on some of the theory, but the main focus will be what crops up when implementing a math library for games. For a really fantastic in-depth treatment on the subject of matrices, checkout these chapters from [Game Math](https://gamemath.com/).
 
 - [Chapter 4: Introduction to Matrices](https://gamemath.com/book/matrixintro.html)
 - [Chapter 6: More on Matrices](https://gamemath.com/book/matrixmore.html)
@@ -18,7 +18,7 @@ When we talk about an `MxN` matrix, in the vast majority of cases (throughout te
 
 ## Convention and Storage/Access
 
-There are two pieces to this puzzle, convention (the maths part (_theory_)) and storage/access (the computer science part (_practice_)). They are both intertwined but it's possible to deal with them individually. Let's start with convention.
+There are two pieces to this puzzle, convention (the maths part, or _theory_), and storage/layout (the engineering part, or _practice_). When we say _column vectors_ and _row vectors_, we're referring to the convention part, when we say _column major_ and _row major_, we're referring to the engineering part (storage/data layout). They are both intertwined, but it's possible to deal with them individually. Let's start with convention.
 
 > If you're already comfortable with the convention part then feel free to skip it and go straight to [storage](#storageaccess).
 
@@ -46,7 +46,7 @@ When we write a vector we can either stand it upright (column vector) or lie it 
 
 {% endraw %}
 
-For purposes of the convention part, when we talk generally about multiplying matrices together, we can think of the above as either a `4x1` matrix (4 rows and 1 column - column major) or a `1x4` matrix (1 row and 4 columns - row major). This fits with the bigger picture of multiplying matrices of different sizes together (this is useful to know about but it's rarely something that comes up outside of multiplying vectors and matrices together, at least in a game development setting).
+For purposes of the convention part, when we talk generally about multiplying matrices together, we can think of the above as either a `4x1` matrix (4 rows and 1 column - a column vector) or a `1x4` matrix (1 row and 4 columns - a row vector). This fits with the bigger picture of multiplying matrices of different sizes together (this is useful to know about but it's rarely something that comes up outside of multiplying vectors and matrices together, at least in a game development setting).
 
 To multiply two matrices together we multiply the row(s) on the left hand side with the column(s) on the right hand side.
 
@@ -124,7 +124,7 @@ This rule satisfies the requirement that we always multiply the row on the left 
 
 {% endraw %}
 
-The last part of the theory (which is closely related to the above) is what we mean when we say post-multiply or pre-multiply. This is relevant because the order we multiply matrices is important. The way we traverse rows on the left side and columns on the right side means if we swap the matrices and perform the same operation (multiplying), then we'll get a different result. When we multiply two column major matrices together we post-multiply them which just means we start on the right and work our way left.
+The last part of the theory (which is closely related to the above) is what we mean when we say post-multiply or pre-multiply. This is relevant because the order we multiply matrices is important. The way we traverse rows on the left side and columns on the right side means if we swap the matrices and perform the same operation (multiplying), then we'll get a different result. When we multiply two column vector matrices together, we post-multiply them, which just means we start on the right and work our way left.
 
 For a concrete example let's take transformations. We usually want to scale first, then rotate and finally translate, this would look like so:
 
@@ -134,7 +134,7 @@ For a concrete example let's take transformations. We usually want to scale firs
 vec4_t point;
 mat4_t translate, rotate, scale;
 // ...
-// concatenating transforms (column major matrices)
+// concatenating transforms (column vector matrices)
 // order: scale, rotate, translate (happening right to left)
 mat4_t transform = translate * rotate * scale;
 // transforming a column vector
@@ -143,7 +143,7 @@ vec4_t transformed_point = transform * point;
 
 {% endraw %}
 
-When dealing with row major matrices we pre-multiply them which means we start on the left and work our way to the right. For the scale, rotate and translate transformation before it now looks like this:
+When dealing with row vector matrices, we pre-multiply them, which means we start on the left and work our way to the right. For the scale, rotate and translate transformation before, it now looks like this:
 
 {% raw %}
 
@@ -151,7 +151,7 @@ When dealing with row major matrices we pre-multiply them which means we start o
 vec4_t point;
 mat4_t translate, rotate, scale;
 // ...
-// concatenating transforms (row major matrices)
+// concatenating transforms (row vector matrices)
 // order: scale, rotate, translate (happening left to right)
 mat4_t transform = scale * rotate * translate;
 // transforming a row vector
@@ -182,7 +182,7 @@ This approach is maybe the most flexible but comes with some considerations. The
 
 #### Array Option #1
 
-Each 3 elements when traversed are the rows of the matrix.
+Each 3 elements when traversed are the rows of the matrix (row major).
 
 {% raw %}
 
@@ -254,17 +254,17 @@ __[Godbolt Link](https://gcc.godbolt.org/z/EbYanPxq7)__
 
 The key thing with the two approaches above is that the storage is identical. The part that's different is access/traversal.
 
-To access elements by their row/column we can write a function for either the column major case or row major case.
+To access elements by their row/column we can write a function for either the column vector case, or row vector case.
 
 {% raw %}
 
 ```c++
-// row major (3x3 matrix)
+// row vector (3x3 matrix)
 int row_col_rm(int row, int col) {
   return row * 3 + col;
 }
 
-// col major (3x3 matrix)
+// column vector (3x3 matrix)
 int row_col_cm(int row, int col) {
   return col * 3 + row;
 }
@@ -282,16 +282,16 @@ int value = mat[offset];       // value 8
 
 {% endraw %}
 
-The bit where this can get a little confusing is if you want to start writing out matrices in your library (this is common for things like rotation and projection matrices). As the data is in a one dimensional array, and we're applying a convention that decides how we access the elements, when we write out a matrix in C/C++, it will always look like it's in row major format even if we're using the column major convention.
+The bit where this can get a little confusing is if you want to start writing out matrices in your library (this is common for things like rotation and projection matrices). As the data is in a one dimensional array, and we're applying a convention that decides how we access the elements, when we write out a matrix in C/C++, it will always be in row major format, even if we're using column vector notation.
 
-Access is the thing that makes the difference. When using row major, we walk each row on the left multiplying by each column on the right. If however we've decided to use the column major convention with this format, we need to update the traversal order.
+Access is the thing that makes the difference. When using row vectors, we walk each row on the left multiplying by each column on the right. If however we've decided to use the column vector convention with this format, we need to update the traversal order.
 
 One (not particularly ideal) solution is to keep the traversal the same, transpose both matrices, swap the order, multiply them and then transpose the result once more. This works, but it's a bunch of extra work. One fairly neat solution is to use our `row_col` lookup functions.
 
 {% raw %}
 
 ```c++
-// row major matrix multiply
+// row vector matrix multiply
 mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
     mat3_t m;
     for (int r = 0; r < 3; ++r) {
@@ -307,7 +307,7 @@ mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
     return m;
 }
 
-// column major matrix multiply
+// column vector matrix multiply
 mat33 operator*(const mat33& lhs, const mat33& rhs) {
     mat33 m;
     for (int r = 0; r < 3; ++r) {
@@ -345,7 +345,7 @@ for (int r = 0; r < 3; ++r) {
   std::cout << '\n';
 }
 
-// row major
+// row vector
 mat3_t a = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 mat3_t b = {9, 8, 7, 6, 5, 4, 3, 2, 1};
 mat3_t result = a * b; // using row_col_rm version, pre-multiply
@@ -359,7 +359,7 @@ mat3_t result = a * b; // using row_col_rm version, pre-multiply
 //
 // display order in rows
 
-// column major
+// column vector
 mat3_t a = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 mat3_t b = {9, 8, 7, 6, 5, 4, 3, 2, 1};
 mat3_t result = b * a; // using row_col_cm version, post-multiply
@@ -397,7 +397,7 @@ Interleave basis vectors and use column major.
 
 In this approach the storage changes. We explicitly lay the data out in column major format but use the lookup and traversal we'd used when the storage was row major before.
 
-One big advantage to this approach is it's possible to write column major matrices out in the source code.
+One big advantage to this approach is it's possible to write column vector matrices out in the source code.
 
 {% raw %}
 
@@ -442,7 +442,7 @@ mat3_t result = b * a; // post-multiply
 
 __[Godbolt Link](https://gcc.godbolt.org/z/o3MGqjd9d)__
 
-If we transpose `result` we get back the matrix in row major format
+If we transpose `result`, we get back the matrix in row major format
 
 {% raw %}
 
@@ -490,7 +490,7 @@ The memory layout will be identical to the single array approach, we just use th
 {% raw %}
 
 ```c++
-// row major matrix multiply
+// row vector matrix multiply
 mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
     mat3_t m;
     for (int r = 0; r < 3; ++r) {
@@ -508,7 +508,7 @@ mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
               [row 0]    [row 1]    [row 2]
 mat3_t a = {{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}};
 mat3_t b = {{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}}};
-mat3_t result = a * b; // pre-multiply (row major)
+mat3_t result = a * b; // pre-multiply (row vectors)
 
 // display storage order
 for (int r = 0; r < 3; ++r) {
@@ -539,7 +539,7 @@ for (int r = 0; r < 3; ++r) {
 
 __[Godbolt Link](https://gcc.godbolt.org/z/bnr7Th1rr)__
 
-To use column major order we can decide to make the main array columns instead of rows and update the traversal order slightly ([Diffchecker link](https://www.diffchecker.com/h0Ewqcwj/)).
+To use column vector order we can decide to make the main array columns instead of rows and update the traversal order slightly ([Diffchecker link](https://www.diffchecker.com/h0Ewqcwj/)).
 
 {% raw %}
 
@@ -548,7 +548,7 @@ struct mat3_t {
   float cols[3][3]; // name helps identify main array
 };
 
-// column major matrix multiply
+// column vector matrix multiply
 mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
     mat3_t m;
     for (int r = 0; r < 3; ++r) {
@@ -567,7 +567,7 @@ mat3_t operator*(const mat3_t& lhs, const mat3_t& rhs) {
               [col 0]    [col 1]    [col 2]
 mat3_t a = {{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}};
 mat3_t b = {{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}}};
-mat3_t result = b * a; // post-multiply (column major)
+mat3_t result = b * a; // post-multiply (column vectors)
 
 // display storage order
 for (int c = 0; c < 3; ++c) {
@@ -600,7 +600,7 @@ __[Godbolt Link](https://gcc.godbolt.org/z/8Mevd36xf)__
 
 This will work but remember using columns as the first parameter when doing a lookup (`[col][row]` instead of `[row][col]`) is less common and may be confusing for users. Ensure to document this clearly in the API if this is something you decide to do.
 
-For completeness you could also do the same as _Array Option 3_ and use rows as the main array and layout the data in column major format, using the same multiply implementation as for row major.
+For completeness, you could also do the same as _Array Option 3_, and use rows as the main array and layout the data in column major format, using the same multiply implementation as for row major.
 
 {% raw %}
 
@@ -754,7 +754,7 @@ for (int r = 0; r < 3; ++r) {
 
 __[Godbolt Link](https://gcc.godbolt.org/z/vjzE8GoqP)__
 
-Depending on which convention you pick (column major and post-multiply or row major and pre-multiply) keep in mind it'll be faster to return a matrix column if you're using column major as we don't have to construct a new object (we could if we wanted return a const reference to it). This means rows will be slightly more expensive to return (as there's a small amount of work to build one) and we can't return a reference to this type as it is constructed on the fly and returned by value (and vice versa when dealing with row major).
+Depending on which convention you pick (column vectors and post-multiply or row vectors and pre-multiply), keep in mind it'll be faster to return a matrix column if you're using column major format as you don't have to construct a new object (we could if we wanted return a const reference to it). This means rows will be slightly more expensive to return (as there's a small amount of work to build one), and we can't return a reference to this type as it is constructed on the fly and returned by value (and vice versa when dealing with row major format).
 
 {% raw %}
 
@@ -786,13 +786,13 @@ If you'd like to explore more you can check out this math library I created writ
 
 - [as - almost something](https://github.com/pr0g/as).
 
-The library uses row major storage/layout but allows either row or column major convention to be used. It is selected by defining either `AS_COL_MAJOR` or `AS_ROW_MAJOR`.
+The library uses row major storage/layout but allows either row or column vector convention to be used. It is selected by defining either `AS_COL_VECTOR` or `AS_ROW_VECTOR`.
 
 I have another math library witten purely in C (no templates or operator overloading).
 
 - [as-c-math](https://github.com/pr0g/as-c-math).
 
-It uses column major storage/layout and convention. It isn't as mature or fully featured as [as](https://github.com/pr0g/as) but it's slowly growing and improving. I hope they might prove useful to review to learn more about what was covered.
+It uses column major storage/layout and column vector convention. It isn't as mature or fully featured as [as](https://github.com/pr0g/as) but it's slowly growing and improving. I hope they might prove useful to review to learn more about what was covered.
 
 #### Existing math libraries
 
