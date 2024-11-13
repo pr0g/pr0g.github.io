@@ -7,7 +7,7 @@ categories: mathematics matrix
 
 This is yet another post about understanding the difference between column vectors, row vectors, and matrices (in a game development setting). If you're attempting to learn or remember the difference between them then hopefully this will be a useful resource and can supplement other reading.
 
-This article will touch on some of the theory, but the main focus will be what crops up when implementing a math library for games. For a really fantastic in-depth treatment on the subject of matrices, checkout these chapters from [Game Math](https://gamemath.com/).
+This article will touch on some of the theory, but the main focus will be what crops up when implementing a math library for games. For a really fantastic in-depth treatment on the subject of matrices, check out these chapters from [Game Math](https://gamemath.com/).
 
 - [Chapter 4: Introduction to Matrices](https://gamemath.com/book/matrixintro.html)
 - [Chapter 6: More on Matrices](https://gamemath.com/book/matrixmore.html)
@@ -786,13 +786,13 @@ If you'd like to explore more you can check out this math library I created writ
 
 - [as - almost something](https://github.com/pr0g/as).
 
-The library uses row major storage/layout but allows either row or column vector convention to be used. It is selected by defining either `AS_COL_VECTOR` or `AS_ROW_VECTOR`.
+The library uses row major storage/layout with row vectors, or column major storage/layout with column vectors. Either can be selected by defining either `AS_COL_MAJOR` or `AS_ROW_MAJOR`. The decision to pair row major with row vectors and column major with column vectors was primarily for improved performance when accessing the basis vectors (X, Y, Z) for either convention.
 
-I have another math library witten purely in C (no templates or operator overloading).
+I have another math library written purely in C (no templates or operator overloading).
 
 - [as-c-math](https://github.com/pr0g/as-c-math).
 
-It uses column major storage/layout and column vector convention. It isn't as mature or fully featured as [as](https://github.com/pr0g/as) but it's slowly growing and improving. I hope they might prove useful to review to learn more about what was covered.
+It uses row major storage/layout and column vectors. This has the advantage of being able to write matrices that appear as they would in a textbook using column vectors. It isn't as mature or fully featured as [as](https://github.com/pr0g/as), but it's slowly growing and improving. I hope they might prove useful to review to learn more about what was covered.
 
 #### Existing math libraries
 
@@ -804,3 +804,11 @@ If this all sounds like too much trouble, there's a ton of excellent math librar
 - [HandmadeMath](https://github.com/HandmadeMath/HandmadeMath) - C
 - [linmath.h](https://github.com/datenwolf/linmath.h) - C
 - [kazmath](https://github.com/Kazade/kazmath) - C
+
+#### Related articles
+
+Below are some additional resources covering row/column major ordering and row/column vectors that are well worth a read to get even more comfortable with this topic.
+
+- [Matrices, Handedness, Pre and Post Multiplication, Row vs Column Major, and Notations](https://seanmiddleditch.github.io/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/)
+- [Vectors, Matrices & Matrix Order](https://docs.o3de.org/blog/posts/vectors-matrices-matrix-order/)
+- [The Ultimate Guide to Matrix Multiplication and Ordering](https://blog.mecheye.net/2024/10/the-ultimate-guide-to-matrix-multiplication-and-ordering/)
