@@ -14,7 +14,7 @@ This article will touch on some of the theory, but the main focus will be what c
 
 ## Prerequisite
 
-When we talk about an `MxN` matrix, in the vast majority of cases (throughout textbooks, papers etc..) the order is rows (`M`) and columns (`N`). This is by far the most common approach and I'd be tempted to recommend sticking with this. There are reasons why deciding to refer to columns first has some advantages (tied to storage reason's we'll get to later), but for consistency, row/column should (_in my opinion_) generally be preferred.
+When we talk about an `MxN` matrix, in the vast majority of cases (throughout textbooks, papers etc...) the order is rows (`M`) and columns (`N`). This is by far the most common approach and I'd be tempted to recommend sticking with this. There are reasons why deciding to refer to columns first has some advantages (tied to storage reason's we'll get to later), but for consistency, row/column should (_in my opinion_) generally be preferred.
 
 ## Convention and Storage/Access
 
