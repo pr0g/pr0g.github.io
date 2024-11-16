@@ -796,7 +796,7 @@ It uses row major storage/layout and column vectors. This has the advantage of b
 
 #### Existing math libraries
 
-If this all sounds like too much trouble, there's a ton of excellent math libraries out there to use. It's very useful to study different libraries to see the various design choices that were made too.
+If this all sounds like too much trouble, there's a ton of excellent math libraries out there to choose from. It's useful to study different implementations to see the various design choices that were made.
 
 - [glm](https://github.com/g-truc/glm) - C++
 - [cglm](https://github.com/recp/cglm) - C
@@ -807,8 +807,14 @@ If this all sounds like too much trouble, there's a ton of excellent math librar
 
 #### Related articles
 
-Below are some additional resources covering row/column major ordering and row/column vectors that are well worth a read to get even more comfortable with this topic.
+Below are some additional resources covering row/column major ordering and row/column vectors that are well worth a read to get even more comfortable with the topic:
 
 - [Matrices, Handedness, Pre and Post Multiplication, Row vs Column Major, and Notations](https://seanmiddleditch.github.io/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/)
 - [Vectors, Matrices & Matrix Order](https://docs.o3de.org/blog/posts/vectors-matrices-matrix-order/)
 - [The Ultimate Guide to Matrix Multiplication and Ordering](https://blog.mecheye.net/2024/10/the-ultimate-guide-to-matrix-multiplication-and-ordering/)
+- [Row major vs. column major, row vectors vs. column vectors](https://fgiesen.wordpress.com/2012/02/12/row-major-vs-column-major-row-vectors-vs-column-vectors/)
+
+The Wikipedia articles covering row/column major order and row/column vectors are also useful to review to emphasize the difference between the two terms:
+
+- [Row- and column-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order)
+- [Row and column vectors](https://en.wikipedia.org/wiki/Row_and_column_vectors)
